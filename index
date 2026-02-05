@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>얼마내 PRO - 맞춤 경조사 가이드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap');
+        body { font-family: 'Pretendard', sans-serif; background: #f8fafc; }
+        .step-content { display: none; }
+        .step-content.active { display: block; animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .extra-btn.active { background-color: #2563eb; color: white; border-color: #2563eb; }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden">
+        <div class="h-2 bg-gray-100 flex">
+            <div id="progressBar" class="h-full bg-blue-600 transition-all duration-500" style="width: 25%;"></div>
+        </div>
+
+        <div class="p-8">
+            <div class="flex items-center justify-between mb-6">
+                <p id="stepCounter" class="text-xs font-semibold text-gray-400">1/3</p>
+                <p class="text-xs text-gray-400">단위: 만원</p>
+            </div>
+            <div id="step1" class="step-content active">
+                <h2 class="text-2xl font-bold mb-2">어떤 경조사인가요?</h2>
+                <p class="text-gray-500 mb-8 text-sm">행사 성격에 따라 기준 금액이 달라집니다.</p>
+                <div class="grid grid-cols-1 gap-4">
+                    <button type="button" onclick="nextStep(1, {event: 'wedding'})" class="flex items-center p-5 border-2 rounded-2xl hover:border-blue-400 hover:bg-blue-50 transition-all focus:outline-none focus:ring-2 focus:ring-blue-200">
+                        <span class="text-3xl mr-4">💍</span>
+                        <div class="text-left"><p class="font-bold">결혼식</p><p class="text-xs text-gray-400">식대와 장소 고려</p></div>
+                    </button>
+                    <button type="button" onclick="nextStep(1, {event: 'funeral'})" class="flex items-center p-5 border-2 rounded-2xl hover:border-blue-400 hover:bg-blue-50 transition-all focus:outline-none focus:ring-2 focus:ring-blue-200">
+                        <span class="text-3xl mr-4">🙏</span>
+                        <div class="text-left"><p class="font-bold">장례식</p><p class="text-xs text-gray-400">조의와 위로의 마음</p></div>
+                    </button>
+                    <button type="button" onclick="nextStep(1, {event: 'baby'})" class="flex items-center p-5 border-2 rounded-2xl hover:border-blue-400 hover:bg-blue-50 transition-all focus:outline-none focus:ring-2 focus:ring-blue-200">
+                        <span class="text-3xl mr-4">👶</span>
+                        <div class="text-left"><p class="font-bold">돌잔치</p><p class="text-xs text-gray-400">축하와 아이의 첫 생일</p></div>
+                    </button>
+                </div>
+            </div>
+
+            <div id="step2" class="step-content">
+                <h2 class="text-2xl font-bold mb-6">상대방과 얼마나 친한가요?</h2>
+                <div class="space-y-3">
+                    <button type="button" onclick="nextStep(2, {score: 10})" class="w-full p-4 border-2 rounded-xl text-left hover:bg-gray-50 font-medium focus:outline-none focus:ring-2 focus:ring-blue-200">거의 가족 같은 사이 (절친)</button>
+                    <button type="button" onclick="nextStep(2, {score: 7})" class="w-full p-4 border-2 rounded-xl text-left hover:bg-gray-50 font-medium focus:outline-none focus:ring-2 focus:ring-blue-200">자주 소통하는 직장 동료/친구</button>
+                    <button type="button" onclick="nextStep(2, {score: 4})" class="w-full p-4 border-2 rounded-xl text-left hover:bg-gray-50 font-medium focus:outline-none focus:ring-2 focus:ring-blue-200">가끔 연락하는 지인</button>
+                    <button type="button" onclick="nextStep(2, {score: 1})" class="w-full p-4 border-2 rounded-xl text-left hover:bg-gray-50 font-medium focus:outline-none focus:ring-2 focus:ring-blue-200">연락이 뜸했던 동창/동료</button>
+                </div>
+                <button type="button" onclick="prevStep(2)" class="w-full mt-6 py-3 border rounded-2xl text-gray-600 font-semibold hover:bg-gray-50 transition-all focus:outline-none focus:ring-2 focus:ring-blue-200">이전</button>
+            </div>
+
+            <div id="step3" class="step-content">
+                <h2 class="text-2xl font-bold mb-6">상세 상황을 알려주세요.</h2>
+                <div class="space-y-6">
+                    <div>
+                        <p id="pplLabel" class="text-sm font-semibold text-gray-700 mb-3">동행 인원 (본인 포함)</p>
+                        <div class="grid grid-cols-3 gap-2" id="pplGroup">
+                            <button type="button" onclick="setExtra('ppl', 1, this)" class="extra-btn py-3 border rounded-xl active focus:outline-none focus:ring-2 focus:ring-blue-200">1명</button>
+                            <button type="button" onclick="setExtra('ppl', 2, this)" class="extra-btn py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200">2명</button>
+                            <button type="button" onclick="setExtra('ppl', 3, this)" class="extra-btn py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200">3명</button>
+                            <button type="button" onclick="setExtra('ppl', 4, this)" class="extra-btn py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200">4명</button>
+                            <button type="button" onclick="setExtra('ppl', 5, this)" class="extra-btn py-3 border rounded-xl col-span-2 focus:outline-none focus:ring-2 focus:ring-blue-200">5명 이상 (가족)</button>
+                        </div>
+                    </div>
+                    <div>
+                        <p id="eatLabel" class="text-sm font-semibold text-gray-700 mb-3">식사 여부</p>
+                        <div class="flex gap-2">
+                            <button type="button" onclick="setExtra('eat', 'yes', this)" class="extra-btn flex-1 py-3 border rounded-xl active focus:outline-none focus:ring-2 focus:ring-blue-200">식사 함</button>
+                            <button type="button" onclick="setExtra('eat', 'no', this)" class="extra-btn flex-1 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200">안 함 / 답례품</button>
+                        </div>
+                    </div>
+                    <button type="button" onclick="showResult()" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold mt-4 shadow-lg active:scale-95 transition-all focus:outline-none focus:ring-2 focus:ring-blue-200">계산 결과 보기</button>
+                    <button type="button" onclick="prevStep(3)" class="w-full py-3 border rounded-2xl text-gray-600 font-semibold hover:bg-gray-50 transition-all focus:outline-none focus:ring-2 focus:ring-blue-200">이전</button>
+                </div>
+            </div>
+
+            <div id="resultStep" class="step-content text-center">
+                <div class="py-10">
+                    <p class="text-gray-500 font-medium mb-2">가장 적절한 금액은</p>
+                    <div class="text-6xl font-black text-blue-600 mb-2" aria-live="polite"><span id="totalAmount">0</span>만원</div>
+                    <p id="rangeText" class="text-sm text-gray-500 mb-6"></p>
+                    <div id="analysisBox" class="bg-blue-50 p-5 rounded-2xl text-left text-sm text-blue-800 leading-relaxed"></div>
+                    <p class="text-[11px] text-gray-400 mt-4 leading-relaxed">
+                        참고: 지역/식대/관계/회사 관행에 따라 달라질 수 있어요. 무리하지 않는 선에서 조정하세요.
+                    </p>
+                </div>
+                <button type="button" onclick="location.reload()" class="w-full py-3 text-gray-400 font-medium hover:text-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-200">처음부터 다시 하기</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let userData = { event: '', score: 0, ppl: 1, eat: 'yes' };
+        let currentStep = 1;
+        const TOTAL_STEPS = 4; // step1~step3 + result
+
+        function updateProgress(step) {
+            const pct = (step / TOTAL_STEPS) * 100;
+            document.getElementById('progressBar').style.width = pct + '%';
+        }
+
+        function updateStepCounter(step) {
+            const el = document.getElementById('stepCounter');
+            if (!el) return;
+            if (step >= 4) el.innerText = '완료';
+            else el.innerText = `${step}/3`;
+        }
+
+        function goToStep(step) {
+            currentStep = step;
+            document.querySelectorAll('.step-content').forEach(s => s.classList.remove('active'));
+            if (step >= 4) document.getElementById('resultStep').classList.add('active');
+            else document.getElementById(`step${step}`).classList.add('active');
+            updateProgress(step >= 4 ? 4 : step);
+            updateStepCounter(step);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function nextStep(current, data) {
+            userData = { ...userData, ...data };
+            if (current === 2) updateStep3UI();
+            goToStep(current + 1);
+        }
+
+        function prevStep(current) {
+            const target = Math.max(1, current - 1);
+            goToStep(target);
+        }
+
+        function setExtra(key, val, el) {
+            userData[key] = val;
+            const parent = el.parentElement;
+            parent.querySelectorAll('.extra-btn').forEach(btn => btn.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function updateStep3UI() {
+            const { event } = userData;
+            const eatLabel = document.getElementById('eatLabel');
+            const pplLabel = document.getElementById('pplLabel');
+            if (!eatLabel || !pplLabel) return;
+
+            if (event === 'funeral') {
+                pplLabel.innerText = '동행 인원 (본인 포함)';
+                eatLabel.innerText = '식사/접객 여부';
+            } else if (event === 'baby') {
+                pplLabel.innerText = '동행 인원 (본인 포함)';
+                eatLabel.innerText = '식사 여부';
+            } else {
+                pplLabel.innerText = '동행 인원 (본인 포함)';
+                eatLabel.innerText = '식사 여부';
+            }
+        }
+
+        function showResult() {
+            const { event, score, ppl, eat } = userData;
+            if (!event || !score) return;
+
+            // 1) 관계 기반 기본 금액 (만원)
+            let baseAmount = 5;
+            if (score >= 10) baseAmount = 20;
+            else if (score >= 7) baseAmount = 10;
+            else if (score >= 4) baseAmount = 7;
+            else baseAmount = 5;
+
+            // 2) 행사별 기본 보정 (과도한 추천 방지)
+            // - 돌잔치: 결혼식 대비 한 단계 낮게
+            // - 장례식: 관계가 아주 가까워도 상한을 다소 보수적으로
+            if (event === 'baby') baseAmount = Math.max(5, baseAmount - 2);
+            if (event === 'funeral') baseAmount = Math.min(baseAmount, 15);
+
+            // 3) 식사/접객(인원) 보정
+            let finalAmount = baseAmount;
+            const mealCost = event === 'baby' ? 5 : event === 'funeral' ? 3 : 7;
+
+            if (eat === 'yes') {
+                // 다인원 계산: (인원수 * 식대/접객비)보다 적으면 그 수준으로 보정
+                const totalMealCost = ppl * mealCost;
+                finalAmount = Math.max(finalAmount, totalMealCost);
+
+                // 결혼식은 식사 동반 시 '지인급 이상' 최소 하한을 둠
+                if (event === 'wedding' && score >= 4) finalAmount = Math.max(finalAmount, 10);
+            } else {
+                // 식사/접객이 없으면(또는 답례품) 너무 큰 경우만 보수적으로 조정
+                if (finalAmount >= 15) finalAmount -= 2;
+            }
+
+            // 4) 5만원 단위 절상
+            finalAmount = Math.ceil(finalAmount / 5) * 5;
+
+            // 결과 화면 업데이트
+            document.getElementById('totalAmount').innerText = finalAmount;
+
+            const minRange = Math.max(5, finalAmount - 5);
+            const maxRange = finalAmount + 5;
+            document.getElementById('rangeText').innerText = `추천 범위: ${minRange}~${maxRange}만원`;
+
+            const lines = [];
+            if (event === 'wedding') {
+                lines.push('최근 고물가/평균 식대를 반영해 계산했어요.');
+                if (eat === 'yes') lines.push(`${ppl}명 기준 식사 비용을 감안했어요.`);
+                else lines.push('식사/답례품 여부를 반영해 보수적으로 조정했어요.');
+            } else if (event === 'baby') {
+                lines.push('결혼식 대비 한 단계 낮은 기준으로 추천했어요.');
+                if (eat === 'yes') lines.push(`${ppl}명 기준 뷔페 비용을 감안했어요.`);
+                else lines.push('식사/답례품 여부를 반영해 보수적으로 조정했어요.');
+            } else {
+                lines.push('조의의 예우를 우선하는 방향으로 과도한 추천을 피했어요.');
+                if (eat === 'yes') lines.push(`${ppl}명 기준 접객/식사 비용을 일부 감안했어요.`);
+            }
+            lines.push('마지막으로 5만원 단위로 정리했어요.');
+
+            document.getElementById('analysisBox').innerHTML =
+                `<ul class="list-disc pl-5 space-y-1">${lines.map(t => `<li>${t}</li>`).join('')}</ul>`;
+
+            goToStep(4);
+        }
+    </script>
+</body>
+</html>
